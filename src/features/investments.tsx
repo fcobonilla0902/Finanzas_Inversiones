@@ -1,8 +1,10 @@
+import { useMoney } from "../components/currency-context";
 import { useState } from "react";
 import { ChartNoAxesCombined } from "lucide-react";
 import { SimulatorChart } from "./simulator-chart";
-import { compound, money } from "../lib/finance";
+import { compound } from "../lib/finance";
 export function Simulator() {
+  const money = useMoney();
   const [initial, setInitial] = useState(10000),
     [monthly, setMonthly] = useState(1000),
     [rate, setRate] = useState(8),
@@ -30,8 +32,8 @@ export function Simulator() {
           </p>
           <div className="investment-fields">
             {[
-              ["Capital inicial", initial, setInitial, 0, 100000000],
-              ["Aportación mensual", monthly, setMonthly, 0, 1000000],
+              ["Capital inicial en MXN", initial, setInitial, 0, 100000000],
+              ["Aportación mensual en MXN", monthly, setMonthly, 0, 1000000],
               ["Tasa nominal anual (%)", rate, setRate, 0, 100],
               ["Plazo en años", years, setYears, 1, 50],
             ].map(([label, value, set, min, max]) => (

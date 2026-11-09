@@ -1,3 +1,4 @@
+import { useMoney } from "./currency-context";
 import {
   ArrowDownLeft,
   ArrowUpRight,
@@ -20,7 +21,6 @@ import {
 } from "recharts";
 import {
   cents,
-  money,
   netWorth,
   spendingByCategory,
   type Account,
@@ -86,6 +86,7 @@ export function HistoryChart({
   from: string;
   to: string;
 }) {
+  const money = useMoney();
   const reducedMotion = useReducedMotion();
   if (!transactions.length)
     return (
@@ -154,14 +155,10 @@ export function HistoryChart({
           />
           <YAxis
             tick={{ fill: "var(--muted)", fontSize: 10 }}
-            width={55}
+            width={80}
             axisLine={false}
             tickLine={false}
-            tickFormatter={(v) =>
-              new Intl.NumberFormat("es-MX", { notation: "compact" }).format(
-                Number(v),
-              )
-            }
+            tickFormatter={(v) => money(Number(v) * 100, true)}
           />
           <Tooltip
             content={<ChartTooltip multiplier={100} labelFormat="date" />}
@@ -193,6 +190,7 @@ export function Spending({
   categories: Category[];
   totalLabel?: string;
 }) {
+  const money = useMoney();
   const reducedMotion = useReducedMotion();
   const data = spendingByCategory(transactions, categories);
   if (!data.length)
@@ -277,6 +275,7 @@ export function MovementList({
   showCreditDetails?: boolean;
   installmentProgress?: Map<string, number>;
 }) {
+  const money = useMoney();
   if (!transactions.length)
     return (
       <Empty

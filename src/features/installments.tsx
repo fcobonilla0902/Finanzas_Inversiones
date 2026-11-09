@@ -1,9 +1,9 @@
+import { useMoney } from "../components/currency-context";
 import { useState, type FormEvent } from "react";
 import { NavLink } from "react-router-dom";
 import {
   cents,
   installmentSummary,
-  money,
   type Transaction,
   type CreditPeriodPayment,
 } from "../lib/finance";
@@ -114,6 +114,7 @@ export function Installments({
   edit: (transaction: Transaction) => void;
   payCard?: (payment: CreditPeriodPayment) => Promise<void>;
 }) {
+  const money = useMoney();
   const [filter, setFilter] = useState("pending");
   const [purchaseType, setPurchaseType] = useState("all");
   const [account, setAccount] = useState("");

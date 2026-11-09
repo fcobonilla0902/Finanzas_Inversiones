@@ -1,3 +1,4 @@
+import { useMoney } from "./components/currency-context";
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { NavLink, Route, Routes, useLocation } from "react-router-dom";
 import {
@@ -24,7 +25,6 @@ import { readAll } from "./lib/repository";
 import { monthlyOutlook } from "./lib/monthly-outlook";
 import {
   balance,
-  money,
   netWorth,
   totals,
   type Account,
@@ -58,6 +58,9 @@ import { Goals } from "./features/goals";
 import { Installments } from "./features/installments";
 import { Configuration } from "./features/settings";
 import { Auth, PasswordRecovery } from "./features/auth";
+import { useContext } from "react";
+import { CurrencyContext } from "./components/currency-context";
+import { CurrencyControls } from "./components/currency-provider";
 
 const Simulator = lazy(() =>
   import("./features/investments").then((module) => ({
@@ -87,6 +90,8 @@ const pageDescriptions: Record<string, string> = {
 };
 
 function App() {
+  const { currency } = useContext(CurrencyContext);
+  const money = useMoney();
   const generation = useRef(0);
   const [dataReady, setDataReady] = useState(false);
   const [recovery, setRecovery] = useState(false);
@@ -389,9 +394,7 @@ function App() {
               <i />
               {session ? "Espacio privado" : "Sin conectar"}
             </span>
-            <span className="currency">
-              MXN <span>· Peso mexicano</span>
-            </span>
+            <span className="currency">{currency}</span>
             <button
               aria-label={
                 resolvedTheme === "dark"
@@ -418,6 +421,7 @@ function App() {
           </div>
         </header>
         <main id="main-content" tabIndex={-1}>
+          <CurrencyControls />
           <div className="page-heading">
             <div>
               <h1>
@@ -528,7 +532,7 @@ function App() {
                         <span className="wealth-label">
                           <Wallet size={18} /> Tu patrimonio neto
                         </span>
-                        <span className="wealth-currency">MXN</span>
+                        <span className="wealth-currency">{currency}</span>
                       </div>
                       <strong className={!dataReady ? "pending-value" : ""}>
                         {dataReady ? money(worth) : "—"}
@@ -598,7 +602,7 @@ function App() {
                             Así evoluciona lo que estás construyendo
                           </p>
                         </div>
-                        <span className="tag">MXN</span>
+                        <span className="tag">{currency}</span>
                       </div>
                       <HistoryChart
                         accounts={accounts}

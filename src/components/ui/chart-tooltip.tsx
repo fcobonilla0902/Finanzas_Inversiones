@@ -1,4 +1,5 @@
-import { money } from "../../lib/finance";
+import { useMoney } from "../currency-context";
+
 interface Entry {
   name?: string | number;
   value?: number | string;
@@ -17,6 +18,7 @@ export function ChartTooltip({
   multiplier?: number;
   labelFormat?: "date" | "year";
 }) {
+  const money = useMoney();
   if (!active || !payload?.length) return null;
   return (
     <div className="chart-tooltip">

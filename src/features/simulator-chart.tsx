@@ -1,3 +1,4 @@
+import { useMoney } from "../components/currency-context";
 import { useState } from "react";
 import {
   AreaChart,
@@ -10,13 +11,13 @@ import {
 } from "recharts";
 import { ChartTooltip } from "../components/ui/chart-tooltip";
 import { useReducedMotion } from "../lib/use-reduced-motion";
-import { money } from "../lib/finance";
 
 export function SimulatorChart({
   points,
 }: {
   points: { year: number; value: number; contributed: number }[];
 }) {
+  const money = useMoney();
   const reduced = useReducedMotion();
   const [capital, setCapital] = useState(true),
     [gain, setGain] = useState(true);
@@ -59,12 +60,8 @@ export function SimulatorChart({
               dy={9}
             />
             <YAxis
-              width={50}
-              tickFormatter={(v) =>
-                new Intl.NumberFormat("es-MX", { notation: "compact" }).format(
-                  Number(v),
-                )
-              }
+              width={80}
+              tickFormatter={(v) => money(Number(v) * 100, true)}
               axisLine={false}
               tickLine={false}
               tick={{ fill: "var(--muted)", fontSize: 10 }}

@@ -1,7 +1,7 @@
+import { useMoney } from "../components/currency-context";
 import { useState, type FormEvent } from "react";
 import {
   cents,
-  money,
   monthlySavingsCapacity,
   savingsGoalForecast,
   accountSavings,
@@ -179,6 +179,7 @@ export function Goals({
   write: Context["write"];
   enabled: boolean;
 }) {
+  const money = useMoney();
   const [editing, setEditing] = useState<SavingsGoal | null>(null);
   const [filter, setFilter] = useState("all"),
     [archived, setArchived] = useState(false);

@@ -1,8 +1,8 @@
+import { useMoney } from "./currency-context";
 import { NavLink } from "react-router-dom";
 import { TrendingUp } from "lucide-react";
 import {
   investmentReturns,
-  money,
   type Account,
   type Transaction,
 } from "../lib/finance";
@@ -14,6 +14,7 @@ export function InvestmentReturns({
   accounts: Account[];
   transactions: Transaction[];
 }) {
+  const money = useMoney();
   if (
     !accounts.some(
       (account) => account.type === "investment" && !account.archived,

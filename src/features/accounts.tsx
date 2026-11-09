@@ -1,9 +1,9 @@
+import { useMoney } from "../components/currency-context";
 import { useState, type FormEvent } from "react";
 import { Landmark, Pencil } from "lucide-react";
 import {
   balance,
   cents,
-  money,
   parseAnnualReturnRate,
   type Account,
 } from "../lib/finance";
@@ -15,6 +15,7 @@ export function Accounts({
   write,
   enabled,
 }: Context & { enabled: boolean }) {
+  const money = useMoney();
   const [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
     [editing, setEditing] = useState<Account | null>(null);
@@ -81,7 +82,7 @@ export function Accounts({
                 ? "Archivada"
                 : a.type === "credit"
                   ? "Pasivo"
-                  : "MXN"}
+                  : "Saldo registrado en MXN"}
             </span>
             <h2>{a.name}</h2>
             <strong>{money(balance(a, transactions))}</strong>

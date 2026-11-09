@@ -1,9 +1,9 @@
+import { useMoney } from "./currency-context";
 import { NavLink } from "react-router-dom";
 import { CreditCard, Target } from "lucide-react";
 import {
   creditCardDebt,
   goalTimeLabel,
-  money,
   monthlySavingsCapacity,
   savingsGoalForecast,
   accountSavings,
@@ -22,6 +22,7 @@ export function CreditDebtSummary({
   transactions: Transaction[];
   ready: boolean;
 }) {
+  const money = useMoney();
   const debt = creditCardDebt(accounts, transactions);
   return (
     <section className="card debt-summary" aria-labelledby="credit-debt-title">
@@ -65,6 +66,7 @@ export function GoalProgress({
 }: {
   forecast: ReturnType<typeof savingsGoalForecast>[number];
 }) {
+  const money = useMoney();
   return (
     <div className="goal-summary">
       <div className="card-heading">
@@ -116,6 +118,7 @@ export function GoalsPreview({
   plan?: SavingsPlan;
   transactions: Transaction[];
 }) {
+  const money = useMoney();
   const capacity = monthlySavingsCapacity(transactions, plan);
   const active = savingsGoalForecast(
     goals,

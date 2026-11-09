@@ -1,5 +1,6 @@
+import { useMoney } from "./currency-context";
 import { NavLink } from "react-router-dom";
-import { money, type Account, type Transaction } from "../lib/finance";
+import { type Account, type Transaction } from "../lib/finance";
 import { monthlyOutlook } from "../lib/monthly-outlook";
 
 export function MonthlyOutlook({
@@ -13,6 +14,7 @@ export function MonthlyOutlook({
   ready: boolean;
   asOf?: string;
 }) {
+  const money = useMoney();
   const summary = monthlyOutlook(accounts, transactions, asOf);
   const amount = (value: number) => (ready ? money(value) : "—");
   const month = new Intl.DateTimeFormat("es-MX", {

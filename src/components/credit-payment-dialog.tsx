@@ -1,8 +1,9 @@
+import { useMoney } from "./currency-context";
 import { useState, type FormEvent } from "react";
 import {
   balance,
+  money as pesos,
   creditPaymentDates,
-  money,
   type Account,
   type Transaction,
   type CreditPeriodPayment,
@@ -31,6 +32,7 @@ export function CreditPaymentDialog({
   close: () => void;
   save: (payment: CreditPeriodPayment) => Promise<void>;
 }) {
+  const money = useMoney();
   const [cardId, setCardId] = useState(initialCard || "");
   const [sourceId, setSourceId] = useState("");
   const [paidOn, setPaidOn] = useState(new Date().toLocaleDateString("en-CA"));
@@ -239,6 +241,7 @@ export function CreditPaymentDialog({
             Sí, pagué el monto completo del periodo hasta el corte
           </label>
           <p className="field-hint">
+            El importe que se registra y descuenta es {pesos(bill?.dueThisMonth ?? 0)} MXN.
             Incluye todas las compras de esa tarjeta que vencen en el periodo,
             aunque hayas filtrado la tabla. No vuelve a contar los meses ya
             pagados.
