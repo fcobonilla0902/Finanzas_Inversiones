@@ -410,17 +410,6 @@ export function Installments({
               </NavLink>
             </p>
           ) : null}
-          {billing
-            .filter((row) => row.bill && row.bill.total > 0)
-            .map((row) => (
-              <p className="field-hint" key={row.transaction.id}>
-                {row.transaction.description}: {money(row.bill!.thisMonth)} del
-                mes{row.bill!.dueDate ? ` · Pago ${row.bill!.dueDate}` : ""}
-                {row.bill!.overdue
-                  ? ` · ${money(row.bill!.overdue)} anteriores pendientes`
-                  : ""}
-              </p>
-            ))}
         </section>
         {list.length ? (
           <p className="field-hint">

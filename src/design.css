@@ -894,7 +894,7 @@ main:focus {
   font-size: 42px;
 }
 .credit-payment-entry {
-  margin-block: 0 16px;
+  margin-block: 16px;
   white-space: normal;
 }
 .monthly-outlook > .monthly-subtotal,
@@ -992,6 +992,7 @@ footer svg {
   font-size: 10px;
   font-weight: 550;
   border-radius: 9px;
+  text-align: center;
 }
 .mobile-nav a.active {
   color: var(--accent);

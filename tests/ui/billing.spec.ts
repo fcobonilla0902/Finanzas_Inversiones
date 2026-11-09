@@ -80,7 +80,7 @@ test("categorías, pagos del mes y Excel conservan importes y filtros", async ({
   await expect(page.locator(".billing-summary .summary-amount")).toHaveText(
     "$66.68",
   );
-  await expect(page.locator(".billing-summary")).toContainText("2027-01-05");
+  await expect(page.locator(".billing-summary")).not.toContainText("2027-01-05");
   await page.evaluate(() => document.fonts.ready);
   await page.screenshot({
     path: info.outputPath("resumen-mensual.png"),
