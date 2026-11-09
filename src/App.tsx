@@ -394,7 +394,7 @@ function App() {
               <i />
               {session ? "Espacio privado" : "Sin conectar"}
             </span>
-            <span className="currency">{currency}</span>
+            <CurrencyControls />
             <button
               aria-label={
                 resolvedTheme === "dark"
@@ -421,7 +421,6 @@ function App() {
           </div>
         </header>
         <main id="main-content" tabIndex={-1}>
-          <CurrencyControls />
           <div className="page-heading">
             <div>
               <h1>

@@ -241,10 +241,10 @@ export function CreditPaymentDialog({
             Sí, pagué el monto completo del periodo hasta el corte
           </label>
           <p className="field-hint">
-            El importe que se registra y descuenta es {pesos(bill?.dueThisMonth ?? 0)} MXN.
-            Incluye todas las compras de esa tarjeta que vencen en el periodo,
-            aunque hayas filtrado la tabla. No vuelve a contar los meses ya
-            pagados.
+            El importe que se registra y descuenta es{" "}
+            {pesos(bill?.dueThisMonth ?? 0)} MXN. Incluye todas las compras de
+            esa tarjeta que vencen en el periodo, aunque hayas filtrado la
+            tabla. No vuelve a contar los meses ya pagados.
           </p>
           {alreadyRecorded && (
             <p className="field-hint">

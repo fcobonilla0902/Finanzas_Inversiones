@@ -164,7 +164,9 @@ test("el tema manual persiste y el simulador responde", async ({ page }) => {
   await page.goto("/inversiones");
   const result = page.locator(".big-number");
   const previous = await result.textContent();
-  await page.getByLabel("Capital inicial", { exact: true }).fill("20000");
+  await page
+    .getByLabel("Capital inicial en MXN", { exact: true })
+    .fill("20000");
   await expect(result).not.toHaveText(previous!);
   await page
     .getByRole("button", { name: "Capital aportado", exact: true })

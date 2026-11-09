@@ -13,6 +13,7 @@ import {
   type ExchangeRates,
 } from "../lib/currency";
 import { CurrencyContext } from "./currency-context";
+import { Globe2 } from "lucide-react";
 const ControlsContext = createContext<ReactNode>(null);
 export function CurrencyControls() {
   return useContext(ControlsContext);
@@ -40,7 +41,8 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
       hasQuote.current = true;
       try {
         const saved = localStorage.getItem("finanzas-currency");
-        if (saved && saved in currencies) setCurrency(saved as Currency);
+        if (saved && Object.hasOwn(currencies, saved))
+          setCurrency(saved as Currency);
       } catch {
         /* La conversión sigue funcionando sin almacenamiento local. */
       }
@@ -50,7 +52,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
           "No se pudo actualizar. " +
             (hasQuote.current
               ? "Se conserva la última cotización consultada."
-              : "Los importes siguen en MXN; vuelve a intentar."),
+              : "Los importes siguen en MXN. Se reintentará automáticamente."),
         );
     } finally {
       window.clearTimeout(timeout);
@@ -59,7 +61,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
   }
   useEffect(() => {
     void refresh();
-    const interval = window.setInterval(() => void refresh(), 60 * 60 * 1000);
+    const interval = window.setInterval(() => void refresh(), 5 * 60 * 1000);
     return () => {
       window.clearInterval(interval);
       request.current?.abort();
@@ -73,73 +75,79 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
     >
       <ControlsContext.Provider
         value={
-          <div className="currency-bar">
-            <label>
-              Ver importes en
-              <select
-                aria-label="Moneda de visualización"
-                value={currency}
-                onChange={(event) => {
-                  const next = event.target.value as Currency;
-                  setCurrency(next);
-                  try {
-                    localStorage.setItem("finanzas-currency", next);
-                  } catch {
-                    /* Preferencia solo para esta sesión. */
-                  }
-                }}
-              >
-                {Object.entries(currencies).map(([code, name]) => (
-                  <option
-                    key={code}
-                    value={code}
-                    disabled={code !== "MXN" && !quote}
-                  >
-                    {code} · {name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <p role="status">
-              {quote ? (
-                <>
-                  Referencia diaria del {quote.date} · Consultada{" "}
-                  {new Date(quote.checkedAt).toLocaleTimeString("es-MX", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                  .{" "}
-                </>
-              ) : busy ? (
-                "Consultando tipos de cambio. "
-              ) : (
-                ""
-              )}
-              Los registros, formularios y archivos Excel siguen en MXN.
-              {quote && (
-                <>
-                  {" "}
-                  Fuente:{" "}
-                  <a
-                    href="https://frankfurter.dev/"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Frankfurter
-                  </a>
-                  .
-                </>
-              )}
-            </p>
-            <button
-              type="button"
-              onClick={() => void refresh()}
-              disabled={busy}
-            >
-              {busy ? "Actualizando…" : "Actualizar cambio"}
-            </button>
-            {error && <p role="alert">{error}</p>}
-          </div>
+          <details
+            className="currency-menu"
+            onKeyDown={(event) => {
+              if (event.key === "Escape") {
+                event.currentTarget.open = false;
+                event.currentTarget.querySelector("summary")?.focus();
+              }
+            }}
+          >
+            <summary aria-label="Cambiar moneda">
+              <Globe2 size={16} aria-hidden="true" /> {currency}
+            </summary>
+            <div className="currency-bar">
+              <label>
+                Ver importes en
+                <select
+                  aria-label="Moneda de visualización"
+                  value={currency}
+                  onChange={(event) => {
+                    const next = event.target.value as Currency;
+                    setCurrency(next);
+                    try {
+                      localStorage.setItem("finanzas-currency", next);
+                    } catch {
+                      /* Preferencia solo para esta sesión. */
+                    }
+                  }}
+                >
+                  {Object.entries(currencies).map(([code, name]) => (
+                    <option
+                      key={code}
+                      value={code}
+                      disabled={code !== "MXN" && !quote}
+                    >
+                      {code} · {name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <p role="status">
+                {quote ? (
+                  <>
+                    Referencia diaria del {quote.date} · Consultada{" "}
+                    {new Date(quote.checkedAt).toLocaleTimeString("es-MX", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                    . Consulta automática cada 5 minutos.{" "}
+                  </>
+                ) : busy ? (
+                  "Consultando tipos de cambio. "
+                ) : (
+                  ""
+                )}
+                Los registros, formularios y archivos Excel siguen en MXN.
+                {quote && (
+                  <>
+                    {" "}
+                    Fuente:{" "}
+                    <a
+                      href="https://frankfurter.dev/"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Frankfurter
+                    </a>
+                    .
+                  </>
+                )}
+              </p>
+              {error && <p role="alert">{error}</p>}
+            </div>
+          </details>
         }
       >
         {children}
