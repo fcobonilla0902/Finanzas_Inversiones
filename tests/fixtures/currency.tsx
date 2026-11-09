@@ -22,7 +22,7 @@ function Preview() {
   return (
     <>
       <header className="topbar">
-        <span>finanzas.</span>
+        <span>finanzas</span>
         <div>
           <CurrencyControls />
         </div>

@@ -339,7 +339,7 @@ function App() {
           <span className="brand-mark">
             <ChartNoAxesCombined size={23} />
           </span>
-          finanzas<span className="brand-dot">.</span>
+          finanzas
         </NavLink>
         <div className="workspace-label">Espacio personal</div>
         <nav aria-label="Navegación principal">
@@ -387,7 +387,7 @@ function App() {
       </aside>
       <div className="main-shell">
         <header className="topbar">
-          <span className="mobile-brand">finanzas.</span>
+          <span className="mobile-brand">finanzas</span>
           <span className="desktop-tagline">Tu dinero, con claridad.</span>
           <div>
             <span className={`connection-status ${session ? "connected" : ""}`}>
@@ -734,7 +734,7 @@ function App() {
           </Routes>
         </main>
         <footer>
-          finanzas. <span>Un poco más de claridad. Un paso más cerca.</span>
+          finanzas <span>Un poco más de claridad. Un paso más cerca.</span>
           <CircleHelp size={15} />
         </footer>
       </div>

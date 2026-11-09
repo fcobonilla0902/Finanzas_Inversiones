@@ -1,5 +1,5 @@
 import { useMoney } from "../components/currency-context";
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { Landmark, Pencil } from "lucide-react";
 import {
   balance,
@@ -16,6 +16,7 @@ export function Accounts({
   enabled,
 }: Context & { enabled: boolean }) {
   const money = useMoney();
+  const editor = useRef<HTMLElement>(null);
   const [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
     [editing, setEditing] = useState<Account | null>(null);
@@ -105,6 +106,18 @@ export function Accounts({
                   setEditing(a);
                   setAccountType(a.type);
                   setError("");
+                  requestAnimationFrame(() => {
+                    editor.current?.scrollIntoView({
+                      block: "start",
+                      behavior: matchMedia("(prefers-reduced-motion: reduce)")
+                        .matches
+                        ? "instant"
+                        : "smooth",
+                    });
+                    editor.current
+                      ?.querySelector<HTMLInputElement>('input[name="name"]')
+                      ?.focus({ preventScroll: true });
+                  });
                 }}
               >
                 <Pencil size={15} />
@@ -133,7 +146,7 @@ export function Accounts({
           </article>
         ))}
       </div>
-      <section className="card narrow">
+      <section className="card narrow" ref={editor}>
         <h2>
           {editing ? "Editar cuenta" : "Crea tu primera cuenta o agrega otra"}
         </h2>

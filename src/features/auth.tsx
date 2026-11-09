@@ -15,7 +15,7 @@ export function Auth() {
           <span className="brand-mark">
             <ChartNoAxesCombined />
           </span>
-          finanzas.
+          finanzas
         </span>
         <p className="eyebrow">MENOS INCERTIDUMBRE. MÁS DIRECCIÓN.</p>
         <h1>

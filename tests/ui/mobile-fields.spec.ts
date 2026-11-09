@@ -1,5 +1,72 @@
 import { test, expect, type Page } from "@playwright/test";
 
+test("fechas, selects y metas se apilan solo en celular", async ({
+  page,
+}, info) => {
+  test.setTimeout(90000);
+  for (const width of [390, 430, 1024]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto("/tests/fixtures/movement.html");
+    await page
+      .getByRole("button", { name: "Abrir formulario", exact: true })
+      .click();
+    const date = await page.getByLabel("Fecha", { exact: true }).boundingBox();
+    const account = await page
+      .getByLabel("Cuenta de origen", { exact: true })
+      .boundingBox();
+    if (width < 768)
+      expect(account!.y).toBeGreaterThanOrEqual(date!.y + date!.height);
+    else expect(Math.abs(date!.y - account!.y)).toBeLessThan(2);
+    await checkFields(page, `fecha y select ${width}px`);
+    if (width === 390)
+      await page.screenshot({
+        path: info.outputPath("movement-stacked.png"),
+        fullPage: true,
+      });
+    await page.goto("/tests/fixtures/goals.html");
+    const target = await page
+      .getByLabel("Objetivo en MXN", { exact: true })
+      .boundingBox();
+    const saved = await page
+      .getByLabel("Ahorrado hasta ahora en MXN", { exact: true })
+      .boundingBox();
+    if (width < 768)
+      expect(saved!.y).toBeGreaterThanOrEqual(target!.y + target!.height);
+    await checkFields(page, `metas ${width}px`);
+    if (width === 390) {
+      await page
+        .getByLabel("Objetivo en MXN", { exact: true })
+        .scrollIntoViewIfNeeded();
+      await page.screenshot({
+        path: info.outputPath("goals-stacked.png"),
+        fullPage: true,
+      });
+    }
+  }
+});
+
+test("editar cuenta lleva al formulario y enfoca su nombre", async ({
+  page,
+}, info) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/tests/fixtures/accounts.html");
+  await page
+    .getByRole("button", { name: "Editar", exact: true })
+    .first()
+    .click();
+  const name = page.locator('input[name="name"]');
+  await expect(name).toHaveValue("Cuenta de prueba 1");
+  await expect(name).toBeFocused();
+  await expect(name).toBeInViewport();
+  await expect(
+    page.getByRole("heading", { name: "Editar cuenta", exact: true }),
+  ).toBeInViewport();
+  await page.screenshot({
+    path: info.outputPath("account-edit.png"),
+    fullPage: true,
+  });
+});
+
 async function checkFields(page: Page, state: string) {
   const overflow = await page
     .locator(
