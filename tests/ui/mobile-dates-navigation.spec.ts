@@ -112,14 +112,16 @@ test("los iconos inferiores y la marca vuelven al inicio de la página", async (
   await expect(nav).toBeVisible({ timeout: 30000 });
   for (const name of [
     "Movimientos",
-    "Inversiones",
+    "Compras con TC",
     "Cuentas",
     "Metas",
     "Inicio",
   ]) {
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await nav.getByRole("link", { name, exact: true }).click();
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(name);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      name === "Compras con TC" ? "Compras con tarjeta de crédito" : name,
+    );
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
     await expect
       .poll(() =>

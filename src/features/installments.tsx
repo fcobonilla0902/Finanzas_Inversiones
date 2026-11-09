@@ -410,13 +410,6 @@ export function Installments({
               </NavLink>
             </p>
           ) : null}
-          <p className="field-hint">
-            El total sigue los filtros de tipo, estado, tarjeta y categoría.
-            Incluye contado y mensualidades según el corte y último día de pago
-            de cada tarjeta. Reconoce los meses marcados pagados y estima los
-            abonos adicionales por vencimiento, sin duplicarlos. No incluye
-            intereses, comisiones ni saldos iniciales.
-          </p>
           {billing
             .filter((row) => row.bill && row.bill.total > 0)
             .map((row) => (

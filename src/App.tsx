@@ -778,12 +778,12 @@ function App() {
         {nav
           .filter(
             ([path]) =>
-              path !== "/configuracion" && path !== "/compras-a-meses",
+              path !== "/configuracion" && path !== "/inversiones",
           )
           .map(([path, label, Icon]) => (
             <NavLink key={path} to={path} end onClick={scrollToTop}>
               <Icon size={21} />
-              <span>{label}</span>
+              <span>{path === "/compras-a-meses" ? "Compras con TC" : label}</span>
             </NavLink>
           ))}
       </nav>
