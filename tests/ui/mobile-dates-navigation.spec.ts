@@ -1,5 +1,42 @@
 import { test, expect } from "@playwright/test";
 
+test("la animación de regreso respeta la preferencia de movimiento", async ({
+  page,
+}) => {
+  await page.route("https://api.frankfurter.dev/**", (route) => route.abort());
+  await page.setViewportSize({ width: 390, height: 700 });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  const home = page
+    .getByRole("navigation", { name: "Navegación móvil" })
+    .getByRole("link", { name: "Inicio", exact: true });
+  await expect(home).toBeVisible();
+  await page.evaluate(() => {
+    const original = window.scrollTo.bind(window);
+    const calls: ScrollToOptions[] = [];
+    (window as Window & { scrollCalls?: ScrollToOptions[] }).scrollCalls =
+      calls;
+    window.scrollTo = ((...args: unknown[]) => {
+      if (typeof args[0] === "object") calls.push(args[0] as ScrollToOptions);
+      Reflect.apply(original, window, args);
+    }) as typeof window.scrollTo;
+  });
+  for (const reducedMotion of ["no-preference", "reduce"] as const) {
+    await page.emulateMedia({ reducedMotion });
+    await page.evaluate(() =>
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "instant" }),
+    );
+    await home.click();
+    const behavior = await page.evaluate(
+      () =>
+        (
+          window as Window & { scrollCalls?: ScrollToOptions[] }
+        ).scrollCalls!.at(-1)!.behavior,
+    );
+    expect(behavior).toBe(reducedMotion === "reduce" ? "instant" : "smooth");
+    await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
+  }
+});
+
 test("las fechas tienen el mismo ancho que descripción y filtros", async ({
   page,
 }, info) => {

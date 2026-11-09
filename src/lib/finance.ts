@@ -209,10 +209,15 @@ export function parseAnnualReturnRate(value: string): string | null {
   return String(Number(rate));
 }
 
+export function investmentDay(now = new Date()) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Mexico_City",
+  }).format(now);
+}
 export function investmentReturns(
   accounts: Account[],
   transactions: Transaction[],
-  asOf = new Date().toLocaleDateString("en-CA"),
+  asOf = investmentDay(),
 ) {
   const recorded = transactions.filter(
     (transaction) => transaction.date <= asOf,

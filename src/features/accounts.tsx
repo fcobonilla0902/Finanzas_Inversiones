@@ -214,8 +214,10 @@ export function Accounts({
                 aria-describedby="annual-return-help"
               />
               <span id="annual-return-help" className="field-hint">
-                Opcional. Se usa para estimar rendimientos con interés simple
-                sobre el saldo registrado; puedes actualizarla cuando cambie.
+                Opcional. Genera un ingreso estimado diario a medianoche, hora
+                de Ciudad de México, sobre el saldo al cierre (tasa anual /
+                365). Los ingresos se reinvierten; puedes actualizar la tasa
+                cuando cambie.
               </span>
             </label>
           )}

@@ -10,9 +10,11 @@ import {
 export function InvestmentReturns({
   accounts,
   transactions,
+  automaticEnabled = false,
 }: {
   accounts: Account[];
   transactions: Transaction[];
+  automaticEnabled?: boolean;
 }) {
   const money = useMoney();
   if (
@@ -55,10 +57,21 @@ export function InvestmentReturns({
             ))}
           </dl>
           <p className="field-hint">
-            Interés simple sobre el saldo registrado hasta hoy, manteniendo
-            capital y tasas constantes. Sin reinversión, comisiones ni
-            impuestos. No son ganancias recibidas ni se suman automáticamente a
-            tus saldos.
+            {automaticEnabled ? (
+              <>
+                Cada medianoche, hora de Ciudad de México, se registra un
+                ingreso estimado sobre el saldo al cierre del día y la tasa
+                anual configurada (base de 365 días). Se suma a tu inversión,
+                patrimonio y ahorro. Los importes de arriba son referencias con
+                el saldo actual; no incluyen comisiones ni impuestos. No vuelvas
+                a registrar el mismo rendimiento si ya se abonó automáticamente.
+              </>
+            ) : (
+              <>
+                Abono automático pendiente de activar en Supabase. Estas cifras
+                son estimaciones y aún no se suman automáticamente a tus saldos.
+              </>
+            )}
           </p>
           <div className="investment-rates">
             {result.investments.map((investment) => (

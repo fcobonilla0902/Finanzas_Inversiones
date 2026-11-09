@@ -25,6 +25,7 @@ import { readAll } from "./lib/repository";
 import { monthlyOutlook } from "./lib/monthly-outlook";
 import {
   balance,
+  investmentDay,
   netWorth,
   totals,
   type Account,
@@ -79,7 +80,13 @@ const nav = [
 ] as const;
 const today = () => new Date().toLocaleDateString("en-CA");
 const scrollToTop = () =>
-  window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? "instant"
+      : "smooth",
+  });
 const pageDescriptions: Record<string, string> = {
   "/compras-a-meses":
     "Consulta compras con tarjeta de crédito, de contado y a meses, y sus pagos pendientes.",
@@ -96,6 +103,7 @@ function App() {
   const money = useMoney();
   const generation = useRef(0);
   const [dataReady, setDataReady] = useState(false);
+  const [automaticReturns, setAutomaticReturns] = useState(false);
   const [recovery, setRecovery] = useState(false);
   const [session, setSession] = useState<Session | null>(null),
     [authReady, setAuthReady] = useState(!supabase);
@@ -162,6 +170,12 @@ function App() {
     setLoading(true);
     setError("");
     try {
+      const { error: accrualError } = await supabase.rpc(
+        "sync_investment_returns",
+      );
+      if (accrualError && accrualError.code !== "PGRST202") throw accrualError;
+      if (request !== generation.current) return;
+      setAutomaticReturns(!accrualError);
       const [accountRows, categoryRows, transactionRows, goalRows, planRows] =
         await Promise.all([
           readAll("accounts", session.user.id),
@@ -225,6 +239,22 @@ function App() {
   }
   useEffect(() => {
     void load();
+    let day = investmentDay();
+    const refresh = () => {
+      if (document.visibilityState === "visible") void load();
+    };
+    const interval = window.setInterval(() => {
+      const next = investmentDay();
+      if (document.visibilityState === "visible" && next !== day) {
+        day = next;
+        void load();
+      }
+    }, 60_000);
+    window.addEventListener("focus", refresh);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener("focus", refresh);
+    };
   }, [session]);
   useEffect(() => {
     if (!notice) return;
@@ -593,6 +623,7 @@ function App() {
                     />
                   </div>
                   <InvestmentReturns
+                    automaticEnabled={automaticReturns}
                     accounts={accounts}
                     transactions={transactions}
                   />

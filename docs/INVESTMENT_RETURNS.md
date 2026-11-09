@@ -18,7 +18,24 @@ Se agregan los resultados antes de redondearlos a centavos. Se usan periodos fij
 
 Ejemplo: $10,000 al 10 % anual produce estimaciones de $2.74 al día, $19.18 por semana, $82.19 por 30 días y $1,000 por año. No se descuentan impuestos o comisiones.
 
-No se crean ingresos automáticamente, no se incrementa el patrimonio con proyecciones y no se modifica el saldo. Actualizar la tasa cambia la estimación actual, no los movimientos históricos. La app no consulta precios de mercado ni acredita rendimientos reales.
+Las proyecciones no alteran saldos. Al activar la migración de abonos diarios, cada día cerrado genera un ingreso estimado en la cuenta de inversión: saldo al cierre × tasa anual / 100 / 365. El ingreso se registra con fecha del día siguiente y se reinvierte. No son rendimientos confirmados por el banco.
+
+## Abono diario a medianoche
+
+La migración `20261110010000_daily_investment_returns.sql` está aplicada al proyecto conectado. Se verificaron la función de sincronización, los permisos, RLS, la inicialización de todas las cuentas de inversión y la tarea Cron activa (`0 * * * *`). Una ejecución de comprobación con rollback devolvió cero abonos al activarse, sin sumar días previos.
+
+El reloj de negocio usa `America/Mexico_City`. Cron comprueba los días cerrados al inicio de cada hora (incluida medianoche) y recupera ejecuciones omitidas. La app también sincroniza exclusivamente las cuentas del usuario al abrirse, volver al foco o cambiar de día. El proceso comienza al activarse, sin sumar días previos.
+
+El control privado por cuenta evita duplicados y conserva fracciones de centavo. Depósitos, retiros y abonos anteriores afectan el siguiente saldo al cierre; se excluyen movimientos futuros. Los cambios de tasa, saldo inicial o archivo liquidan primero los días pendientes con los valores anteriores. Los movimientos retroactivos no recalculan ingresos ya registrados. No registres manualmente de nuevo un rendimiento ya contabilizado automáticamente.
+
+Pruebas locales en PostgreSQL embebido, sin cambios persistentes:
+
+```powershell
+npm install --prefix artifacts/sql-check --no-save --package-lock=false @electric-sql/pglite
+node tests/sql/check-investment-returns.mjs
+```
+
+Se verificaron medianoche, idempotencia, reinversión, aportaciones, retiros, fechas futuras, recuperación, fracciones de centavo, cambios de tasa, archivo, permisos y aislamiento por usuario. La extensión Cron y su tarea activa se comprobaron en Supabase después de aplicar la migración; queda por observar la primera ejecución programada a medianoche.
 
 ## Persistencia
 
