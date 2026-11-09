@@ -78,6 +78,8 @@ const nav = [
   ["/configuracion", "Configuración", Settings],
 ] as const;
 const today = () => new Date().toLocaleDateString("en-CA");
+const scrollToTop = () =>
+  window.scrollTo({ top: 0, left: 0, behavior: "instant" });
 const pageDescriptions: Record<string, string> = {
   "/compras-a-meses":
     "Consulta compras con tarjeta de crédito, de contado y a meses, y sus pagos pendientes.",
@@ -232,7 +234,7 @@ function App() {
   const location = useLocation();
   useEffect(() => {
     setError("");
-    window.scrollTo(0, 0);
+    scrollToTop();
   }, [location.pathname]);
   async function write(
     table: string,
@@ -335,7 +337,7 @@ function App() {
         Saltar al contenido
       </a>
       <aside className="sidebar">
-        <NavLink to="/" className="brand">
+        <NavLink to="/" className="brand" onClick={scrollToTop}>
           <span className="brand-mark">
             <ChartNoAxesCombined size={23} />
           </span>
@@ -387,7 +389,9 @@ function App() {
       </aside>
       <div className="main-shell">
         <header className="topbar">
-          <span className="mobile-brand">finanzas</span>
+          <NavLink to="/" className="mobile-brand" onClick={scrollToTop}>
+            finanzas
+          </NavLink>
           <span className="desktop-tagline">Tu dinero, con claridad.</span>
           <div>
             <span className={`connection-status ${session ? "connected" : ""}`}>
@@ -745,7 +749,7 @@ function App() {
               path !== "/configuracion" && path !== "/compras-a-meses",
           )
           .map(([path, label, Icon]) => (
-            <NavLink key={path} to={path} end>
+            <NavLink key={path} to={path} end onClick={scrollToTop}>
               <Icon size={21} />
               <span>{label}</span>
             </NavLink>

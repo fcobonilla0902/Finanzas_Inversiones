@@ -228,7 +228,8 @@ b {
   justify-content: space-between;
   border-bottom: 1px solid var(--border);
 }
-.topbar > span {
+.topbar > span,
+.topbar > .mobile-brand {
   font-size: 17px;
   color: var(--text);
   font-weight: 750;
@@ -2014,6 +2015,21 @@ input[type="range"] {
   }
 }
 @media (max-width: 767px) {
+  input[type="date"],
+  input[type="month"] {
+    -webkit-appearance: none;
+    appearance: none;
+    display: block;
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+  }
+  input[type="date"]::-webkit-date-and-time-value,
+  input[type="month"]::-webkit-date-and-time-value {
+    min-width: 0;
+    text-align: left;
+  }
   .filters {
     grid-template-columns: minmax(0, 1fr);
   }
