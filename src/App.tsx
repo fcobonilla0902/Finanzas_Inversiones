@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "./lib/supabase";
+import { sessionTimeRemaining } from "./lib/session-expiry";
 import { readAll } from "./lib/repository";
 import { monthlyOutlook } from "./lib/monthly-outlook";
 import {
@@ -164,6 +165,25 @@ function App() {
     });
     return () => data.subscription.unsubscribe();
   }, []);
+  useEffect(() => {
+    if (!supabase || !session) return;
+    const auth = supabase.auth;
+    const remaining = () => sessionTimeRemaining(session.user.last_sign_in_at);
+    const expire = () => {
+      if (remaining() > 0) return;
+      setSession(null);
+      setRecovery(false);
+      void auth.signOut({ scope: "local" });
+    };
+    const timer = window.setTimeout(expire, remaining());
+    window.addEventListener("focus", expire);
+    document.addEventListener("visibilitychange", expire);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("focus", expire);
+      document.removeEventListener("visibilitychange", expire);
+    };
+  }, [session]);
   async function load() {
     if (!supabase || !session) return;
     const request = ++generation.current;

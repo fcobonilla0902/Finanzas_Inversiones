@@ -29,7 +29,7 @@ Evidencia local, excluida de Git: `artifacts/supabase-before.json`, `artifacts/s
 3. Iniciar sesión y crear una cuenta financiera con saldo inicial.
 4. Registrar ingresos y gastos; crear una segunda cuenta para transferencias.
 
-No se creó un usuario personal ni se envió correo durante la verificación. La prueba SQL confirma el comportamiento de la base, pero todavía no constituye una prueba de extremo a extremo desde el navegador con tu usuario. Las sesiones de la aplicación permanecen en memoria y una recarga requiere iniciar sesión.
+No se creó un usuario personal ni se envió correo durante la verificación. La prueba SQL confirma el comportamiento de la base, pero todavía no constituye una prueba de extremo a extremo desde el navegador con tu usuario. Las sesiones ahora persisten al recargar mediante localStorage; la app aplica un cierre local una hora después del inicio de sesión, también al regresar a una pestaña suspendida. Este cambio de persistencia y plazo tiene pruebas unitarias, pero no se ha verificado de extremo a extremo con una cuenta real.
 
 ## Rendimiento anual por cuenta
 

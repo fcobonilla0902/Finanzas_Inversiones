@@ -28,7 +28,7 @@ El dashboard incluye deuda por tarjeta y progreso de ahorro. El menú **Metas** 
 
 La migración usa RLS y relaciones compuestas con `user_id` que impiden enlazar registros de otro usuario. Los montos son `numeric(15,2)` en PostgreSQL, limitados al rango seguro de centavos de JavaScript. La app usa centavos enteros para balances; el simulador emplea coma flotante porque es una proyección.
 
-Las sesiones se conservan en memoria: recargar requiere autenticarse. La preferencia de tema es el único dato guardado en localStorage. No hay caché offline ni service worker en esta fase. La aplicación necesita conexión para guardar. Para uso diario puede evaluarse persistencia de sesión con un modelo de seguridad explícito.
+Las sesiones se guardan en localStorage para conservar el acceso al recargar. La app cierra la sesión local una hora después del último inicio de sesión, sin extender ese plazo al recargar o renovar el token; comprueba también el vencimiento al volver a la pestaña. Este plazo se aplica en el cliente, no sustituye las políticas de sesión del servidor. La preferencia de tema también se guarda en localStorage. No hay caché offline ni service worker en esta fase. La aplicación necesita conexión para guardar.
 
 ## Reglas contables
 
