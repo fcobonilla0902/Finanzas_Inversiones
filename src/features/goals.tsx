@@ -243,7 +243,15 @@ export function Goals({
     setEditing(goal);
     setErrors({});
     setError("");
-    requestAnimationFrame(() => document.getElementById("goal-name")?.focus());
+    requestAnimationFrame(() => {
+      document.getElementById("goal-form")?.scrollIntoView({
+        block: "start",
+        behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "instant"
+          : "smooth",
+      });
+      document.getElementById("goal-name")?.focus({ preventScroll: true });
+    });
   }
   return (
     <>

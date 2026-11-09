@@ -380,6 +380,7 @@ function App() {
               key={path}
               to={path}
               end
+              onClick={scrollToTop}
               className={({ isActive }) =>
                 isActive ? "nav-item active" : "nav-item"
               }
